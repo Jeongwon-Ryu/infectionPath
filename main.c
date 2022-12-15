@@ -98,16 +98,26 @@ int main(int argc, const char* argv[]) {
 
         case MENU_PLACE:
             printf("Place Name : ");
-            scanf("%s", &place);
-            for (i = 0; i < pIndex; i++)
+            scanf("%s", place);
+            int num = ifctdb_len();
+
+
+            for (i = 0; i < ifctdb_len(); i++)
             {
-                if (strcmp(place, ifctele_getPlaceName(ifctele_getHistPlaceIndex(ifctdb_getData(i), N_HISTORY - 1))) == 0)
+                if (strcmp(place, ifctele_getPlaceName(ifctele_getHistPlaceIndex(ifctdb_getData(i), N_HISTORY - 1))) == 0) {
                     ifctele_printElement(ifctdb_getData(i));
+                }
+                else
+                    num--;
+    
             }
-            if (ifctdb_len()==0)
+            
+            if (num == 0)
             {
-                printf("There are %d patients detected in %d", pIndex, placeHist[i]);
+                printf("There are 0 patients detected in %s\n", place);
             }
+
+            printf("\n");
             break;
 
         case MENU_AGE:
@@ -122,6 +132,8 @@ int main(int argc, const char* argv[]) {
                 if (min_age <= ifctele_getAge(ifctdb_getData(i)) && max_age >= ifctele_getAge(ifctdb_getData(i)))
                     ifctele_printElement(ifctdb_getData(i));
             }
+
+
             break;
 
         case MENU_TRACK:
@@ -180,7 +192,7 @@ int trackInfester(int patient_no, int* detected_time, int* place)
     int col = 0;
     int num = 0;
     int i, j;
-    
+	 
     for (i = 0; i < ifctdb_len(); i++)
     {
         if (patient_no == i)

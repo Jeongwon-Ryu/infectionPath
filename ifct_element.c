@@ -135,7 +135,6 @@ void* ifctele_genElement(int index, int age, unsigned int detected_time, int his
     //ifsarray[ifs_cnt].inf_detected_time = detected_time;
     for (i = 0; i < N_HISTORY; i++)
         strPtr->place_t[i] = history_place[i];
-        
     return strPtr;
 }
 
@@ -146,8 +145,16 @@ void ifctele_printElement(void* obj) {
     printf("Age : %i\n", strPtr->age);
     printf("Detected time : %i\n", strPtr->inf_detected_time);
     printf("Path History :");
-    ifctele_getHistPlaceIndex(obj, strPtr->Index);
+    int i;
+	
+	for (i = 0; i < 5; i++)
+    {
+        printf("%s(%i)", ifctele_getPlaceName(ifctele_getHistPlaceIndex(obj, i)), strPtr->place_t[i]);
+        if (i >= 0 && i < 4)
+            printf("-> ");
+    }
     printf("\n");
+    printf("-------------------------------------------------------------------------------\n");
 
 }
 
@@ -155,12 +162,7 @@ int ifctele_getHistPlaceIndex(void* obj, int index) {
     int i;
     ifs_ele_t* strPtr = (ifs_ele_t*)obj;
 
-    for (i = 0; i < 5; i++) {
-        printf("%s (%d) ", ifctele_getPlaceName(strPtr->place_t[i]), ifctele_getinfestedTime(obj) - (4 - i));
-        printf("%s", ifctele_getPlaceName(strPtr->place_t[i]));
-        if (i != 4)
-            printf("-> ");
-    }
+    return strPtr->place_t[index];
 }
 
 unsigned int ifctele_getinfestedTime(void* obj) {

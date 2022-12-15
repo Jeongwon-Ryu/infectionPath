@@ -90,16 +90,6 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit6]
-FileName=..\..\..\project 수정필요\patientInfo_sample.txt
-Folder=
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-CompileCpp=0
-
 [Unit2]
 FileName=ifct_database.h
 Folder=
@@ -109,4 +99,13 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=0
+
+[Unit6]
+FileName=patientInfo_sample.txt
+Folder=
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 
