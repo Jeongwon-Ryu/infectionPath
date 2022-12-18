@@ -70,7 +70,7 @@ int main(int argc, const char* argv[]) {
     fclose(fp);
 
     do {
-        //printf("\n=============== INFECTION PATH MANAGEMENT PROGRAM (No. of patients : %i) =============\n", ifctdb_len());
+        printf("\n=============== INFECTION PATH MANAGEMENT PROGRAM (No. of patients : %i) =============\n", ifctdb_len());
         printf("\n1. Print details about a patient.\n");                      //MENU_PATIENT
         printf("2. Print list of patients infected at a place.\n");        //MENU_PLACE
         printf("3. Print list of patients in a range of age.\n");          //MENU_AGE
@@ -100,12 +100,14 @@ int main(int argc, const char* argv[]) {
             printf("Place Name : ");
             scanf("%s", place);
             int num = ifctdb_len();
-
+            
 
             for (i = 0; i < ifctdb_len(); i++)
             {
                 if (strcmp(place, ifctele_getPlaceName(ifctele_getHistPlaceIndex(ifctdb_getData(i), N_HISTORY - 1))) == 0) {
                     ifctele_printElement(ifctdb_getData(i));
+                    
+                    printf("There are %i patients detected in %s\n", sizeof(ifctele_printElement(ifctdb_getData(i))) , place);
                 }
                 else
                     num--;
@@ -114,7 +116,7 @@ int main(int argc, const char* argv[]) {
             
             if (num == 0)
             {
-                printf("There are 0 patients detected in %s\n", place);
+                printf("\nThere are 0 patients detected in %s\n", place);
             }
 
             printf("\n");
@@ -126,19 +128,22 @@ int main(int argc, const char* argv[]) {
 
             printf("maximal age : "); //최고나이 변수를 max_age 
             scanf("%d", &max_age);
+        
 
             for (i = 0; i < ifctdb_len(); i++)
             {
                 if (min_age <= ifctele_getAge(ifctdb_getData(i)) && max_age >= ifctele_getAge(ifctdb_getData(i)))
-                    ifctele_printElement(ifctdb_getData(i));
-            }
+                	ifctele_printElement(ifctdb_getData(i));
+                	         	
+            }  
+            printf("\nThere are %i patients whose age is between %i and %i.\n",sizeof(ifctele_printElement(ifctdb_getData(i))) , min_age, max_age);
 
 
             break;
 
         case MENU_TRACK:
             printf("Patient index : ");
-            scanf("%d", &patient_track);
+            scanf("%d", &pIndex);
             for (i = 0; i < ifctdb_len(); i++)
             {
                 temp1[i] = ifctele_getinfestedTime(ifctdb_getData(i));
@@ -156,7 +161,7 @@ int main(int argc, const char* argv[]) {
             val = trackInfester(pIndex, temp1, temp2);
 
             if (pIndex < 0 || pIndex >= ifctdb_len())
-                printf("Patient index error\n");
+                printf("[ERROR] Your input for the patient index (%i) is wrong!\n", pIndex);
 
             else if (pIndex != val)
             {
@@ -168,15 +173,15 @@ int main(int argc, const char* argv[]) {
                 printf("The first infector of %i is %i\n", pIndex, val2);
             }
 
-            else
+            else 
             {
                 printf("\n");
-                printf("The first infector is %i\n", pIndex);
+                printf("%i is the first infector!!!\n", pIndex);
             }
             break;
 
         default:
-            printf("Menu index error\n", menu_selection);
+            printf("[ERROR] Wrong menu selection! (%i), please choose between 0 ~ 4\n", menu_selection);
             break;
         }
 

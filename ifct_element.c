@@ -142,7 +142,7 @@ void ifctele_printElement(void* obj) {
     ifs_ele_t* strPtr = (ifs_ele_t*)obj;
     printf("------------------------------------------------------------------------------------\n");
     printf("Patient index : %i\n", strPtr->Index);
-    printf("Age : %i\n", strPtr->age);
+    printf("Patient Age : %i\n", strPtr->age);
     printf("Detected time : %i\n", strPtr->inf_detected_time);
     printf("Path History :");
     int i;
@@ -154,7 +154,7 @@ void ifctele_printElement(void* obj) {
             printf("-> ");
     }
     printf("\n");
-    printf("-------------------------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------------------------\n\n");
 
 }
 
