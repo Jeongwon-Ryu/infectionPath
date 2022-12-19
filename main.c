@@ -53,14 +53,14 @@ int main(int argc, const char* argv[]) {
 
     //1-2. loading each patient informations
     while (3 == (fscanf(fp, "%d %d %d", &pIndex, &age, &time))) {
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < N_HISTORY; i++) {
             fscanf(fp, "%d", &placeHist[i]);
         }
         ifct_element = ifctele_genElement(pIndex, age, time, placeHist);
         ifctdb_addTail(ifct_element);
 
         printf("%i 번째 환자 감염 경로 :", pIndex);
-        for (j = 0; j < 5; j++) {
+        for (j = 0; j < N_HISTORY; j++) {
             printf("%s  ", ifctele_getPlaceName(placeHist[j]));
         }
         printf("\n");
@@ -107,7 +107,7 @@ int main(int argc, const char* argv[]) {
                 if (strcmp(place, ifctele_getPlaceName(ifctele_getHistPlaceIndex(ifctdb_getData(i), N_HISTORY - 1))) == 0) {
                     ifctele_printElement(ifctdb_getData(i));
                     
-                    printf("There are %i patients detected in %s\n", sizeof(ifctele_printElement(ifctdb_getData(i))) , place);
+                    printf("There are %i patients detected in %s\n", sizeof(num)/sizeof(int) , place);
                 }
                 else
                     num--;
@@ -128,21 +128,23 @@ int main(int argc, const char* argv[]) {
 
             printf("maximal age : "); //최고나이 변수를 max_age 
             scanf("%d", &max_age);
-        
-
+            int num2 = sizeof(ifctdb_getData(i));
+            
             for (i = 0; i < ifctdb_len(); i++)
             {
                 if (min_age <= ifctele_getAge(ifctdb_getData(i)) && max_age >= ifctele_getAge(ifctdb_getData(i)))
+               
                 	ifctele_printElement(ifctdb_getData(i));
-                	         	
-            }  
-            printf("\nThere are %i patients whose age is between %i and %i.\n",sizeof(ifctele_printElement(ifctdb_getData(i))) , min_age, max_age);
+                
+            
+			}printf("\nThere are %i patients whose age is between %i and %i.\n", sizeof(num2) , min_age, max_age);
+            
 
-
+											
             break;
 
         case MENU_TRACK:
-            printf("Patient index : ");
+            printf("Patient index :");
             scanf("%d", &pIndex);
             for (i = 0; i < ifctdb_len(); i++)
             {
