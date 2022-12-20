@@ -128,19 +128,20 @@ int main(int argc, const char* argv[]) {
 
             printf("maximal age : "); //최고나이 변수를 max_age 
             scanf("%d", &max_age);
-            int num2 = sizeof(ifctdb_getData(i));
+            int nPatient = 0;
             
             for (i = 0; i < ifctdb_len(); i++)
             {
                 if (min_age <= ifctele_getAge(ifctdb_getData(i)) && max_age >= ifctele_getAge(ifctdb_getData(i)))
-               
-                	ifctele_printElement(ifctdb_getData(i));
+				{
+                	ifctele_printElement(ifctdb_getData(i));//환자 정보 출력 
+                	nPatient++;	
+            	}
                 
-            
-			}printf("\nThere are %i patients whose age is between %i and %i.\n", sizeof(num2) , min_age, max_age);
-            
-
-											
+   			}
+   			printf("\nThere are %i patients whose age is between %i and %i.\n\n", nPatient , min_age, max_age);            
+             
+								
             break;
 
         case MENU_TRACK:
