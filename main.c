@@ -17,6 +17,7 @@
 #define MENU_EXIT           0
 
 #define TIME_HIDE           2
+#define FILE_NAME  "patientInfo_sample.txt"
 
 
 int trackInfester(int patient_no, int* detected_time, int* place);
@@ -25,14 +26,14 @@ int main(int argc, const char* argv[]) {
     int menu_selection;
     void* ifct_element;
     FILE* fp;
-    int pIndex, age, time;
-    int placeHist[N_HISTORY];
-    int pNum;
+    int pIndex, age, time;      //환자 인덱스, 나이, 시간 
+    int placeHist[N_HISTORY];   //place history
+    int pNum;                   //환자 넘버 
     char place[100];
     int min_age, max_age;
-    int patient_track;
+    int patient_track;          // 환자 경로 
     int i, j;
-    int temp1[10000], temp2[10000], val, val2;
+    int temp1[10000], temp2[10000], val, val2;  //temp는 detected time, val은 track infector
 
     //------------- 1. loading patient info file ------------------------------
     //1-1. FILE pointer open
@@ -43,31 +44,35 @@ int main(int argc, const char* argv[]) {
         return -1;
     }*/
 
-    fp = fopen("patientInfo_sample.txt", "r");
+    fp = fopen(FILE_NAME, "r"); // 파일이 존재하면  읽기 전용으로 엶
     //fp = fopen(argv[1], "r");
-    if (fp == NULL)
+    if (fp == NULL) // 파일이 존재하지 않으면 에러 처리하고 종료 
     {
         printf("[ERROR] Failed to open database file!! (%s)\n", argv[1]);
-        return -1;
+        return -1; 
     }
 
     //1-2. loading each patient informations
-    while (3 == (fscanf(fp, "%d %d %d", &pIndex, &age, &time))) {
-        for (i = 0; i < N_HISTORY; i++) {
-            fscanf(fp, "%d", &placeHist[i]);
+    while (3 == (fscanf(fp, "%d %d %d", &pIndex, &age, &time))) //변수 간 공백으로 분리된 파일과 파일의 앞 부분 (3개) 읽음 
+	{
+        for (i = 0; i < N_HISTORY; i++) // 파일의 앞 부분(3개) 이후의 정수(5개의 장소)를 배열에 저장, i < N_HISTORY일 때까지 반복해서 읽어 옴 
+		{
+            fscanf(fp, "%d", &placeHist[i]); 
         }
-        ifct_element = ifctele_genElement(pIndex, age, time, placeHist);
+        ifct_element = ifctele_genElement(pIndex, age, time, placeHist); // 구조체에 넣음 
         ifctdb_addTail(ifct_element);
 
         printf("%i 번째 환자 감염 경로 :", pIndex);
-        for (j = 0; j < N_HISTORY; j++) {
+        
+        for (j = 0; j < N_HISTORY; j++)  // j < N_HISTORY 일 때까지 반복해서 읽어 옴 
+		{
             printf("%s  ", ifctele_getPlaceName(placeHist[j]));
         }
         printf("\n");
     }
 
     //1-3. FILE pointer close
-    fclose(fp);
+    fclose(fp); 
 
     do {
         printf("\n=============== INFECTION PATH MANAGEMENT PROGRAM (No. of patients : %i) =============\n", ifctdb_len());
@@ -84,70 +89,75 @@ int main(int argc, const char* argv[]) {
 
         switch (menu_selection)
         {
-        case MENU_EXIT:
+        case MENU_EXIT: // 0. 나가기  
             printf("Exiting the program... Bye bye.\n");
             break;
 
-        case MENU_PATIENT:
-            printf("Patient index : ");
+        case MENU_PATIENT: // 1. 환자 정보  
+            printf("Patient index :");
             scanf("%d", &pNum);
-            if (pNum <= pIndex) {
+            
+            if (pNum <= pIndex) //입력받은 환자 번호가 환자 인덱스보다 작으면 입력받은 환자 정보 가져와서 출력 
+			{
                 ifctele_printElement(ifctdb_getData(pNum));
             }
+            
             break;
 
-        case MENU_PLACE:
-            printf("Place Name : ");
-            scanf("%s", place);
-            int num = ifctdb_len();
+        case MENU_PLACE: // 2. 장소에서 감염된 환자 정보 
+            printf("Place Name :");
+            scanf("%s", &place);
+            
+            int num = ifctdb_len(); 
             
 
-            for (i = 0; i < ifctdb_len(); i++)
+            for (i = 0; i < ifctdb_len(); i++) // i < ifctdb_len() 일 때까지 반복, 입력받은 장소가 환자의 감염 장소와 일치하면 관련 환자 정보를 출력(장소와 시점 함께)   
             {
-                if (strcmp(place, ifctele_getPlaceName(ifctele_getHistPlaceIndex(ifctdb_getData(i), N_HISTORY - 1))) == 0) {
+                if (strcmp(place, ifctele_getPlaceName(ifctele_getHistPlaceIndex(ifctdb_getData(i), N_HISTORY - 1))) == 0) 
+				{
                     ifctele_printElement(ifctdb_getData(i));
                     
-                    printf("There are %i patients detected in %s\n", sizeof(num)/sizeof(int) , place);
+                    printf("There are %i patients detected in %s\n", sizeof(ifctele_printElement(ifctdb_getData(i))), place);
                 }
                 else
                     num--;
-    
             }
             
-            if (num == 0)
+            if (num == 0)  //그렇지 않을 때 
             {
-                printf("\nThere are 0 patients detected in %s\n", place);
+                printf("\nThere are 0 patient detected in %s\n", place);
             }
-
+            
             printf("\n");
             break;
 
-        case MENU_AGE:
+        case MENU_AGE: // 3. 나이 범위 사이에 있는 환자 정보 
             printf("minimal age : "); //최소나이 변수를 min_age 
             scanf("%d", &min_age);
 
             printf("maximal age : "); //최고나이 변수를 max_age 
             scanf("%d", &max_age);
-            int nPatient = 0;
             
-            for (i = 0; i < ifctdb_len(); i++)
+            int nPatient = 0;  //다음 조건을 만족하는 환자 수를 나타내는 변수 
+            
+            for (i = 0; i < ifctdb_len(); i++) // i < ifctdb_len()일 때까지 반복, 다음 두 조건을 모두 만족하는 환자 정보를 가져와서 출력 
             {
                 if (min_age <= ifctele_getAge(ifctdb_getData(i)) && max_age >= ifctele_getAge(ifctdb_getData(i)))
 				{
-                	ifctele_printElement(ifctdb_getData(i));//환자 정보 출력 
+                	ifctele_printElement(ifctdb_getData(i));
+                	
                 	nPatient++;	
-            	}
-                
+            	}    
    			}
-   			printf("\nThere are %i patients whose age is between %i and %i.\n\n", nPatient , min_age, max_age);            
-             
-								
+   			
+   			printf("\nThere are %i patients whose age is between %i and %i.\n\n", nPatient , min_age, max_age);  // 조건 만족하는 환자명 수 출력            				
             break;
 
-        case MENU_TRACK:
+        case MENU_TRACK: // 감염 경로 
             printf("Patient index :");
             scanf("%d", &pIndex);
-            for (i = 0; i < ifctdb_len(); i++)
+            
+            for (i = 0; i < ifctdb_len(); i++) // i < ifctdb_len()까지 반복, 감염된 시점 
             {
                 temp1[i] = ifctele_getinfestedTime(ifctdb_getData(i));
             }
@@ -163,76 +173,34 @@ int main(int argc, const char* argv[]) {
 
             val = trackInfester(pIndex, temp1, temp2);
 
-            if (pIndex < 0 || pIndex >= ifctdb_len())
+            if (pIndex < 0 || pIndex >= ifctdb_len()) // 입력 받은 환자 index가 음수이거나 ifctdb_len()보다 크면 에러 처리 
                 printf("[ERROR] Your input for the patient index (%i) is wrong!\n", pIndex);
 
-            else if (pIndex != val)
+            else if (pIndex != val) //pIndex가 최초 전파자가 아닐 경우 
             {
-                do {
-                    val2 = trackInfester(val, temp1, temp2);
+                do 
+				{
+                    val2 = trackInfester(val, temp1, temp2); //경로 전파자 
                     val = val2;
-                } while (val2 != val);
+                } while (val2 != val); // val2가 val과 다를 때 까지 
 
-                printf("The first infector of %i is %i\n", pIndex, val2);
+                printf("The first infector of %i is %i\n", pIndex, val2); //pIndex와 전파자 번호 출력 
             }
 
-            else 
+            else //pIndex가 최초전파자일 때 
             {
                 printf("\n");
                 printf("%i is the first infector!!!\n", pIndex);
             }
             break;
 
-        default:
+        default: // 잘못된 메뉴 번호를 입력받았을 때 에러 처리 
             printf("[ERROR] Wrong menu selection! (%i), please choose between 0 ~ 4\n", menu_selection);
             break;
         }
 
-    } while (menu_selection != 0);
+    } while (menu_selection != 0); // 0. 나가기 전까지 반복 
 
 
     return 0;
-}
-
-int trackInfester(int patient_no, int* detected_time, int* place)
-{
-    int row = 0;
-    int col = 0;
-    int num = 0;
-    int i, j;
-	 
-    for (i = 0; i < ifctdb_len(); i++)
-    {
-        if (patient_no == i)
-            continue;
-        else
-        {
-            for (j = 0; j < N_HISTORY - 2; j++)
-            {
-                if (detected_time[patient_no] - (N_HISTORY - 1 - j) == detected_time[i])
-                {
-                    if (place[patient_no * N_HISTORY + j] == place[i * N_HISTORY + 4])
-                    {
-                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j]));
-                        return i;
-                    }
-                }
-                else if (detected_time[patient_no] - (N_HISTORY - 1 - j) == detected_time[i] - 1)
-                {
-                    if (place[patient_no * N_HISTORY + j] == place[i * N_HISTORY + 3])
-                    {
-                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j]));
-                        return i;
-                    }
-                }
-                else
-                    num++;
-            }
-        }
-    }
-
-    if (num == (ifctdb_len() - 1) * (N_HISTORY - 2))
-
-        return patient_no;
-
 }

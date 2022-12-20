@@ -1,4 +1,4 @@
-#pragma once
+#pragma once //헤더의 중복 선언 방지 
 //
 //  ifct_database.h
 //  infection Path

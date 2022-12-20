@@ -52,7 +52,7 @@ typedef enum place {
     Istanbul,       //37
     Dubai,          //38
     CapeTown        //39
-} place_t;
+} place_t; 
 
 char countryName[N_PLACE + 1][MAX_PLACENAME] =
 { "Seoul",
@@ -99,10 +99,10 @@ char countryName[N_PLACE + 1][MAX_PLACENAME] =
 };
 
 typedef struct ifs_ele {
-    int Index;
-    int age;
-    int inf_detected_time;
-    int place_t[N_HISTORY];
+    int Index; //환자 index 
+    int age; // 나이 
+    int inf_detected_time; // 감염 시점 
+    int place_t[N_HISTORY]; //장소 이동 경로, enum을 이용했기 때문에 정수로 저장됨 
 
 } ifs_ele_t;
 
@@ -118,7 +118,7 @@ int ifctele_getAge(void* obj) {
 
 char* ifctele_getPlaceName(int placeIndex) {
 
-    return countryName[placeIndex];
+    return countryName[placeIndex]; // 해당 번호의 장소이름을 반환 
 }
 
 void* ifctele_genElement(int index, int age, unsigned int detected_time, int history_place[N_HISTORY]) {
@@ -137,7 +137,7 @@ void* ifctele_genElement(int index, int age, unsigned int detected_time, int his
         strPtr->place_t[i] = history_place[i];
     return strPtr;
 }
-
+//환자 정보 
 void ifctele_printElement(void* obj) {
     ifs_ele_t* strPtr = (ifs_ele_t*)obj;
     printf("------------------------------------------------------------------------------------\n");
@@ -145,9 +145,10 @@ void ifctele_printElement(void* obj) {
     printf("Patient Age : %i\n", strPtr->age);
     printf("Detected time : %i\n", strPtr->inf_detected_time);
     printf("Path History :");
+    
     int i;
 	
-	for (i = 0; i < N_HISTORY; i++)
+	for (i = 0; i < N_HISTORY; i++) // 이동 장소와 시점 출력, i < N_HISTORY까지 반복 
     {
         printf("%s(%i)", ifctele_getPlaceName(ifctele_getHistPlaceIndex(obj, i)), strPtr->inf_detected_time-(N_HISTORY-1));
         
@@ -174,4 +175,47 @@ unsigned int ifctele_getinfestedTime(void* obj) {
 
 
     return ((strPtr->inf_detected_time));
+}
+
+int trackInfester(int patient_no, int* detected_time, int* place) //감염자의 경로와 전파자의 경로를 추적해서 최초 전파자를 찾음 
+{
+    int row = 0;
+    int col = 0;
+    int num = 0;
+    int i, j;
+	 
+    for (i = 0; i < ifctdb_len(); i++) // i < ifctdb_len()까지 반복 
+    {
+        if (patient_no == i)
+            continue;
+        else
+        {
+            for (j = 0; j < N_HISTORY - 2; j++) // 
+            {
+                if (detected_time[patient_no] - (N_HISTORY - 1 - j) == detected_time[i])
+                {
+                    if (place[patient_no * N_HISTORY + j] == place[i * N_HISTORY + 4])
+                    {
+                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j]));
+                        return i;
+                    }
+                }
+                else if (detected_time[patient_no] - (N_HISTORY - 1 - j) == detected_time[i] - 1)
+                {
+                    if (place[patient_no * N_HISTORY + j] == place[i * N_HISTORY + 3])
+                    {
+                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j]));
+                        return i;
+                    }
+                }
+                else
+                    num++;
+            }
+        }
+    }
+
+    if (num == (ifctdb_len() - 1) * (N_HISTORY - 2))
+
+        return patient_no;
+
 }
