@@ -194,7 +194,7 @@ int trackInfester(int patient_no, int* detected_time, int* place) { //°¨¿°ÀÚÀÇ °
                 {
                     if (place[patient_no * N_HISTORY + j] == place[i * N_HISTORY + 4])
                     {
-                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j]));
+                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j])); //patient_no¿Í ÀüÆÄÀÚ, °¨¿° Àå¼Ò¿Í ½ÃÁ¡ Ãâ·Â 
                         return i;
                     }
                 }
@@ -202,7 +202,7 @@ int trackInfester(int patient_no, int* detected_time, int* place) { //°¨¿°ÀÚÀÇ °
                 {
                     if (place[patient_no * N_HISTORY + j] == place[i * N_HISTORY + 3])
                     {
-                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j]));
+                        printf("-->[Tracking] patient %i is infected by %i (time : %i, place : %s)\n", patient_no, i, detected_time[patient_no] - (N_HISTORY - 1 - j), ifctele_getPlaceName(place[patient_no * N_HISTORY + j])); //patient_no¿Í ÀüÆÄÀÚ, °¨¿° Àå¼Ò¿Í ½ÃÁ¡ Ãâ·Â 
                         return i;
                     }
                 }
@@ -210,10 +210,10 @@ int trackInfester(int patient_no, int* detected_time, int* place) { //°¨¿°ÀÚÀÇ °
                     num++;
             }
         }
-    }
+    } 
 
     if (num == (ifctdb_len() - 1) * (N_HISTORY - 2)) 
 
-        return patient_no;
+        return patient_no; //patient_no ¹ÝÈ¯ 
 
-}
+} // ¹Ýº¹ÇÏ¸é¼­ ÀÔ·Â ¹ÞÀº patient_noÀÇ ÃÖÃÊ ÀüÆÄÀÚ Ã£À½ 
